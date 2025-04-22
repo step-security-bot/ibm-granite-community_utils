@@ -93,6 +93,11 @@ jobs:
       runs_on: ${{ steps.json.outputs.runs_on }}
       python_versions: ${{ steps.json.outputs.python_versions }}
     steps:
+      - name: "Harden Runner"
+        uses: step-security/harden-runner@c95a14d0e5bab51a9f56296a4eb0e416910cd350 # v2.10.3
+        with:
+          egress-policy: audit # TODO: change to 'egress-policy: block' after couple of runs
+
       - name: Checkout
         uses: actions/checkout@v4
         with:
@@ -109,7 +114,7 @@ jobs:
       - name: Find changed notebook files
         if: ${{ !inputs.all }}
         id: changed-files
-        uses: tj-actions/changed-files@v46
+        uses: step-security/changed-files@v45
         with:
           files_from_source_file: ${{ inputs.notebook-lists }}
           files: ${{ inputs.notebook }}
@@ -137,6 +142,11 @@ jobs:
         python: ${{ fromJSON(needs.prepare.outputs.python_versions) }}
     runs-on: ${{ matrix.os }}
     steps:
+      - name: "Harden Runner"
+        uses: step-security/harden-runner@c95a14d0e5bab51a9f56296a4eb0e416910cd350 # v2.10.3
+        with:
+          egress-policy: audit # TODO: change to 'egress-policy: block' after couple of runs
+
       - name: Free Disk Space
         if: ${{ inputs.free-disk-space }}
         uses: jlumbroso/free-disk-space@v1.3.1
